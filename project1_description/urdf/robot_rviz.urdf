@@ -1,0 +1,507 @@
+<?xml version="1.0"?>
+
+<robot name="my_robot">
+
+  <ros2_control name="my_robot" type="system">
+    <hardware>
+      <plugin>mock_components/GenericSystem</plugin>
+      <param name="calculate_dynamics">true</param>
+      <!-- <plugin>ros2_control_demo_example_11/CarlikeBotSystemHardware</plugin>
+            <param name="example_param_hw_start_duration_sec">0</param>
+            <param name="example_param_hw_stop_duration_sec">3.0</param> -->
+    </hardware>
+    <joint name="wheel_1_turn">
+      <command_interface name="position" />
+      <state_interface name="position" />
+    </joint>
+    <joint name="wheel_3_rotate">
+      <command_interface name="velocity" />
+      <state_interface name="velocity" />
+      <state_interface name="position" />
+    </joint>
+  </ros2_control>
+
+  <link name="base_footprint" />
+
+  <!-- ================= MAIN BODY OF THE ROBOT ================= -->
+  <!-- Link representing the car body -->
+  <link name="car">
+    <!-- Physical properties of the car body -->
+    <inertial>
+      <origin xyz="2.64031 -0.0268655 0.124371" rpy="0 0 0" />
+      <mass value="272.397" />
+      <inertia ixx="8.49296" ixy="-3.31557e-08" ixz="-0.693976" iyy="18.6031" iyz="-6.39825e-08"
+        izz="22.111" />
+    </inertial>
+
+    <!-- Visual representation of the car -->
+    <visual>
+      <origin xyz="2.59628 -0.0268655 0.07044" rpy="-5.08255e-17 -1.95707e-17 -3.14159" />
+      <geometry>
+        <mesh filename="package://project1_description/urdf/assets_1/car.stl" />
+      </geometry>
+      <material name="car_material">
+        <color rgba="0 0.5 0.5 1" />
+      </material>
+    </visual>
+
+    <!-- Collision model for physics simulation -->
+    <collision>
+      <origin xyz="2.59628 -0.0268655 0.07044" rpy="-5.08255e-17 -1.95707e-17 -3.14159" />
+      <geometry>
+        <mesh filename="package://project1_description/urdf/assets_1/car.stl" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="base_footprint_to_base_link" type="fixed">
+    <parent link="base_footprint" />
+    <child link="car" />
+    <!-- Z offset equals the height from ground to chassis origin -->
+    <origin xyz="0 0 0.2" rpy="0 0 0" />
+  </joint>
+
+  <!-- ================= FRONT WHEELS ================= -->
+  <!-- Front Right Wheel -->
+  <link name="wheel_front_right">
+    <inertial>
+      <origin xyz="0 -1.38778e-17 -0.0136924" rpy="0 0 0" />
+      <mass value="2.073" />
+      <inertia ixx="0.00644579" ixy="0" ixz="-1.53625e-35" iyy="0.00644579" iyz="0" izz="0.0109084" />
+    </inertial>
+
+    <!-- Visual appearance -->
+    <visual>
+      <origin xyz="0.25068 0.109 0.2028" rpy="-1.5708 8.85232e-34 0" />
+      <geometry>
+        <mesh filename="package://project1_description/urdf/assets_1/wheel_2.stl" />
+      </geometry>
+      <material name="wheel_front_right_material">
+        <color rgba="0.286275 0.113725 0.113725 1" />
+      </material>
+    </visual>
+
+    <!-- Collision model -->
+    <collision>
+      <origin xyz="0.25068 0.109 0.2028" rpy="-1.5708 8.85232e-34 0" />
+      <geometry>
+        <mesh filename="package://project1_description/urdf/assets_1/wheel_2.stl" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Joint connecting car to front right wheel -->
+  <!-- <joint name="wheel_1_rotate" type="fixed">
+    <origin xyz="2.84696 -0.204665 -0.03856" rpy="1.5708 1.74171e-17 -3.14159" />
+    <parent link="car" />
+    <child link="wheel_front_right" />
+    <axis xyz="0 0 1" />
+    <limit effort="10" velocity="10" />
+  </joint> -->
+
+  <joint name="wheel_1_turn" type="revolute">
+    <origin xyz="2.84696 -0.204665 -0.03856" rpy="1.5708 1.74171e-17 -3.14159" />
+    <parent link="car" />
+    <child link="wheel_front_right" />
+    <axis xyz="0 1 0" />
+    <limit effort="10" velocity="10" lower="-0.5" upper="0.5" />
+  </joint>
+
+  <!-- Front Left Wheel -->
+  <link name="wheel_front_left">
+    <inertial>
+      <origin xyz="4.44089e-16 1.38778e-17 -0.0136924" rpy="0 0 0" />
+      <mass value="2.073" />
+      <inertia ixx="0.00644579" ixy="0" ixz="-1.53625e-35" iyy="0.00644579" iyz="0" izz="0.0109084" />
+    </inertial>
+
+    <!-- Visual -->
+    <visual>
+      <origin xyz="0.25068 -0.109 0.2028" rpy="1.5708 8.85232e-34 0" />
+      <geometry>
+        <mesh filename="package://project1_description/urdf/assets_1/wheel_1.stl" />
+      </geometry>
+      <material name="wheel_front_left_material">
+        <color rgba="0.286275 0.113725 0.113725 1" />
+      </material>
+    </visual>
+
+    <!-- Collision -->
+    <collision>
+      <origin xyz="0.25068 -0.109 0.2028" rpy="1.5708 8.85232e-34 0" />
+      <geometry>
+        <mesh filename="package://project1_description/urdf/assets_1/wheel_1.stl" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Joint connecting car to front left wheel -->
+  <!-- <joint name="wheel_2_rotate" type="fixed">
+    <origin xyz="2.84696 0.150935 -0.03856" rpy="1.5708 -1.74171e-17 4.16334e-16" />
+    <parent link="car" />
+    <child link="wheel_front_left" />
+    <axis xyz="0 0 1" />
+    <limit effort="10" velocity="10" />
+  </joint> -->
+
+  <joint name="wheel_2_turn" type="revolute">
+    <origin xyz="2.84696 0.150935 -0.03856" rpy="1.5708 -1.74171e-17 4.16334e-16" />
+    <parent link="car" />
+    <child link="wheel_front_left" />
+    <axis xyz="0 1 0" />
+    <limit effort="10" velocity="10" lower="-0.5" upper="0.5" />
+    <mimic joint="wheel_1_turn" multiplier="1.0" offset="0.0" />
+  </joint>
+
+  <!-- ================= REAR WHEELS ================= -->
+  <!-- Back Left Wheel -->
+  <link name="wheel_back_left">
+    <inertial>
+      <origin xyz="0 -4.16334e-17 -0.0136924" rpy="0 0 0" />
+      <mass value="2.073" />
+      <inertia ixx="0.00644579" ixy="5.80054e-66" ixz="-3.11695e-34" iyy="0.00644579"
+        iyz="-2.13907e-34" izz="0.0109084" />
+    </inertial>
+
+    <!-- Visual -->
+    <visual>
+      <origin xyz="-0.25068 -0.109 0.2028" rpy="1.5708 -2.46519e-32 0" />
+      <geometry>
+        <mesh filename="package://project1_description/urdf/assets_1/wheel_3.stl" />
+      </geometry>
+      <material name="wheel_back_left_material">
+        <color rgba="0.266667 0.0941176 0.0941176 1" />
+      </material>
+    </visual>
+
+    <!-- Collision -->
+    <collision>
+      <origin xyz="-0.25068 -0.109 0.2028" rpy="1.5708 -2.46519e-32 0" />
+      <geometry>
+        <mesh filename="package://project1_description/urdf/assets_1/wheel_3.stl" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Joint connecting car to back left wheel -->
+  <joint name="wheel_3_rotate" type="continuous">
+    <origin xyz="2.3456 0.150935 -0.03856" rpy="1.5708 -0.101632 3.60341e-16" />
+    <parent link="car" />
+    <child link="wheel_back_left" />
+    <axis xyz="0 0 -1" />
+    <limit effort="10" velocity="10" />
+  </joint>
+
+  <!-- Back Right Wheel -->
+  <link name="wheel_back_right">
+    <inertial>
+      <origin xyz="0 -1.38778e-17 -0.0136924" rpy="0 0 0" />
+      <mass value="2.073" />
+      <inertia ixx="0.00644579" ixy="0" ixz="-1.53625e-35" iyy="0.00644579" iyz="0" izz="0.0109084" />
+    </inertial>
+
+    <!-- Visual -->
+    <visual>
+      <origin xyz="0.25068 0.109 0.2028" rpy="-1.5708 8.85232e-34 0" />
+      <geometry>
+        <mesh filename="package://project1_description/urdf/assets_1/wheel_2.stl" />
+      </geometry>
+      <material name="wheel_back_right_material">
+        <color rgba="0.286275 0.113725 0.113725 1" />
+      </material>
+    </visual>
+
+    <!-- Collision -->
+    <collision>
+      <origin xyz="0.25068 0.109 0.2028" rpy="-1.5708 8.85232e-34 0" />
+      <geometry>
+        <mesh filename="package://project1_description/urdf/assets_1/wheel_2.stl" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Joint connecting car to back right wheel -->
+  <joint name="wheel_4_rotate" type="continuous">
+    <origin xyz="2.3456 -0.204665 -0.03856" rpy="1.5708 1.74171e-17 -3.14159" />
+    <parent link="car" />
+    <child link="wheel_back_right" />
+    <axis xyz="0 0 1" />
+    <limit effort="10" velocity="10" />
+    <mimic joint="wheel_3_rotate" multiplier="1.0" offset="0.0" />
+  </joint>
+
+  <!-- ================= TRAILER 1 ================= -->
+  <!-- First trailer body -->
+  <link name="trailer_1">
+    <inertial>
+      <origin xyz="0.553916 -0.00073121 -0.0381683" rpy="0 0 0" />
+      <mass value="192.913" />
+      <inertia ixx="5.05694" ixy="-1.03955e-06" ixz="0.000605924" iyy="11.6798" iyz="-2.39251e-09"
+        izz="15.528" />
+    </inertial>
+
+    <!-- Visual -->
+    <visual>
+      <origin xyz="0.153998 0.253269 -0.0537474" rpy="0 -0 -9.94689e-34" />
+      <geometry>
+        <mesh filename="package://project1_description/urdf/assets_1/trailer_1.stl" />
+      </geometry>
+      <material name="trailer_1_material">
+        <color rgba="0 0 1 1" />
+      </material>
+    </visual>
+
+    <!-- Collision -->
+    <collision>
+      <origin xyz="0.153998 0.253269 -0.0537474" rpy="0 -0 -9.94689e-34" />
+      <geometry>
+        <mesh filename="package://project1_description/urdf/assets_1/trailer_1.stl" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- ================= TRAILER 2 ================= -->
+  <!-- Second trailer body -->
+  <link name="trailer_2">
+    <inertial>
+      <origin xyz="0.553757 0.000731212 -0.038177" rpy="0 0 0" />
+      <mass value="192.85" />
+      <inertia ixx="5.05689" ixy="-1.25045e-16" ixz="0.00143767" iyy="11.6659" iyz="2.86391e-16"
+        izz="15.5142" />
+    </inertial>
+
+    <!-- Visual -->
+    <visual>
+      <origin xyz="0.153998 0.254731 -0.0537474" rpy="0 -0 -9.94689e-34" />
+      <geometry>
+        <mesh filename="package://project1_description/urdf/assets_1/trailer_2.stl" />
+      </geometry>
+      <material name="trailer_2_material">
+        <color rgba="0.0862745 0.321569 0.580392 1" />
+      </material>
+    </visual>
+
+    <!-- Collision -->
+    <collision>
+      <origin xyz="0.153998 0.254731 -0.0537474" rpy="0 -0 -9.94689e-34" />
+      <geometry>
+        <mesh filename="package://project1_description/urdf/assets_1/trailer_2.stl" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- ================= TRAILER 2 WHEELS ================= -->
+  <!-- Left wheel of trailer 2 -->
+  <link name="trailer_2_left_wheel">
+    <inertial>
+      <origin xyz="0 0 -0.0136924" rpy="0 0 0" />
+      <mass value="2.073" />
+      <inertia ixx="0.00644579" ixy="0" ixz="2.5332e-34" iyy="0.00644579" iyz="0" izz="0.0109084" />
+    </inertial>
+
+    <!-- Visual representation -->
+    <visual>
+      <origin xyz="-0.25068 -0.109 0.2028" rpy="1.5708 -1.45971e-32 0" />
+      <geometry>
+        <mesh filename="package://project1_description/urdf/assets_1/wheel_3.stl" />
+      </geometry>
+      <material name="trailer_2_left_wheel_material">
+        <color rgba="0.266667 0.0941176 0.0941176 1" />
+      </material>
+    </visual>
+
+    <!-- Collision geometry -->
+    <collision>
+      <origin xyz="-0.25068 -0.109 0.2028" rpy="1.5708 -1.45971e-32 0" />
+      <geometry>
+        <mesh filename="package://project1_description/urdf/assets_1/wheel_3.stl" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Revolute joint connecting trailer_2 to its left wheel -->
+  <joint name="trailer_2_left_wheel_rotate" type="continuous">
+    <origin xyz="0.553998 -0.278269 -0.111928" rpy="1.5708 -7.0243e-16 3.14159" />
+    <parent link="trailer_2" />
+    <child link="trailer_2_left_wheel" />
+    <axis xyz="0 0 1" />
+    <limit effort="10" velocity="10" />
+    <mimic joint="wheel_3_rotate" multiplier="-1.0" offset="0.0" />
+  </joint>
+
+  <!-- Right wheel of trailer 2 -->
+  <link name="trailer_2_right_wheel">
+    <inertial>
+      <origin xyz="-5.55112e-17 -2.77556e-17 -0.0136924" rpy="0 0 0" />
+      <mass value="2.073" />
+      <inertia ixx="0.00644579" ixy="0" ixz="2.5332e-34" iyy="0.00644579" iyz="0" izz="0.0109084" />
+    </inertial>
+
+    <!-- Visual representation -->
+    <visual>
+      <origin xyz="0.25068 0.109 0.2028" rpy="-1.5708 -1.45971e-32 0" />
+      <geometry>
+        <mesh filename="package://project1_description/urdf/assets_1/wheel_2.stl" />
+      </geometry>
+      <material name="trailer_2_right_wheel_material">
+        <color rgba="0.286275 0.113725 0.113725 1" />
+      </material>
+    </visual>
+
+    <!-- Collision geometry -->
+    <collision>
+      <origin xyz="0.25068 0.109 0.2028" rpy="-1.5708 -1.45971e-32 0" />
+      <geometry>
+        <mesh filename="package://project1_description/urdf/assets_1/wheel_2.stl" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Revolute joint connecting trailer_2 to its right wheel -->
+  <joint name="trailer_2_right_wheel_rotate" type="continuous">
+    <origin xyz="0.553998 0.279731 -0.111928" rpy="1.5708 7.0243e-16 -1.66533e-16" />
+    <parent link="trailer_2" />
+    <child link="trailer_2_right_wheel" />
+    <axis xyz="0 0 1" />
+    <limit effort="10" velocity="10" />
+    <mimic joint="wheel_3_rotate" multiplier="1.0" offset="0.0" />
+  </joint>
+
+  <!-- Joint connecting trailer_1 to trailer_2 (hook articulation) -->
+  <joint name="trailer_2_hook_rotate" type="revolute">
+    <origin xyz="1.04451 -0.00106933 -0.00510208" rpy="-3.61767e-30 4.34182e-30 5.55112e-17" />
+    <parent link="trailer_1" />
+    <child link="trailer_2" />
+    <axis xyz="0 0 1" />
+    <!-- Rotational limit of ±30 degrees -->
+    <limit effort="10" velocity="10" lower="-0.523599" upper="0.523599" />
+  </joint>
+
+  <!-- ================= TRAILER 1 WHEELS ================= -->
+  <!-- Left wheel of trailer 1 -->
+  <link name="trailer_1_left_wheel">
+    <inertial>
+      <origin xyz="0 1.38778e-17 -0.0136924" rpy="0 0 0" />
+      <mass value="2.073" />
+      <inertia ixx="0.00644579" ixy="0" ixz="-3.99475e-34" iyy="0.00644579" iyz="0" izz="0.0109084" />
+    </inertial>
+
+    <!-- Visual -->
+    <visual>
+      <origin xyz="-0.25068 -0.109 0.2028" rpy="1.5708 2.3019e-32 0" />
+      <geometry>
+        <mesh filename="package://project1_description/urdf/assets_1/wheel_3.stl" />
+      </geometry>
+      <material name="trailer_1_left_wheel_material">
+        <color rgba="0.266667 0.0941176 0.0941176 1" />
+      </material>
+    </visual>
+
+    <!-- Collision -->
+    <collision>
+      <origin xyz="-0.25068 -0.109 0.2028" rpy="1.5708 2.3019e-32 0" />
+      <geometry>
+        <mesh filename="package://project1_description/urdf/assets_1/wheel_3.stl" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Joint connecting trailer_1 to its left wheel -->
+  <joint name="trailer_1_left_wheel_rotate" type="continuous">
+    <origin xyz="0.553998 -0.279731 -0.111928" rpy="1.5708 4.97587e-16 3.14159" />
+    <parent link="trailer_1" />
+    <child link="trailer_1_left_wheel" />
+    <axis xyz="0 0 1" />
+    <limit effort="10" velocity="10" />
+    <mimic joint="wheel_3_rotate" multiplier="-1.0" offset="0.0" />
+  </joint>
+
+  <!-- Right wheel of trailer 1 -->
+  <link name="trailer_1_right_wheel">
+    <inertial>
+      <origin xyz="-2.22045e-16 0 -0.0136924" rpy="0 0 0" />
+      <mass value="2.073" />
+      <inertia ixx="0.00644579" ixy="-1.54752e-66" ixz="-3.99475e-34" iyy="0.00644579"
+        iyz="1.06953e-34" izz="0.0109084" />
+    </inertial>
+
+    <!-- Visual -->
+    <visual>
+      <origin xyz="0.25068 0.109 0.2028" rpy="-1.5708 2.3019e-32 0" />
+      <geometry>
+        <mesh filename="package://project1_description/urdf/assets_1/wheel_2.stl" />
+      </geometry>
+      <material name="trailer_1_right_wheel_material">
+        <color rgba="0.286275 0.113725 0.113725 1" />
+      </material>
+    </visual>
+
+    <!-- Collision -->
+    <collision>
+      <origin xyz="0.25068 0.109 0.2028" rpy="-1.5708 2.3019e-32 0" />
+      <geometry>
+        <mesh filename="package://project1_description/urdf/assets_1/wheel_2.stl" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Joint connecting trailer_1 to its right wheel -->
+  <joint name="trailer_1_right_wheel_rotate" type="continuous">
+    <origin xyz="0.553998 0.278269 -0.111928" rpy="1.5708 -4.97587e-16 -5.55112e-17" />
+    <parent link="trailer_1" />
+    <child link="trailer_1_right_wheel" />
+    <axis xyz="0 0 1" />
+    <limit effort="10" velocity="10" />
+    <mimic joint="wheel_3_rotate" multiplier="1.0" offset="0.0" />
+  </joint>
+
+  <!-- Joint connecting car to trailer_1 (main hitch) -->
+  <joint name="trailer_1_hook_rotate" type="revolute">
+    <origin xyz="1.99047 -0.0268655 0.09544" rpy="-5.08255e-17 -1.95707e-17 -3.14159" />
+    <parent link="car" />
+    <child link="trailer_1" />
+    <axis xyz="0 0 1" />
+    <!-- Rotational limit of ±30 degrees -->
+    <limit effort="10" velocity="10" lower="-0.523599" upper="0.523599" />
+  </joint>
+
+  <!-- ================= LIDAR SENSOR ================= -->
+  <!-- Lidar sensor mounted on top of car -->
+  <link name="lidar">
+    <inertial>
+      <origin xyz="1.03328e-18 1.28749e-18 -0.0125" rpy="0 0 0" />
+      <mass value="0.102259" />
+      <inertia ixx="3.7331e-05" ixy="0" ixz="0" iyy="3.7331e-05" iyz="0" izz="6.401e-05" />
+    </inertial>
+
+    <!-- Visual -->
+    <visual>
+      <origin xyz="0 -0.00011979 0" rpy="3.14159 -0 0" />
+      <geometry>
+        <mesh filename="package://project1_description/urdf/assets_1/lidar.stl" />
+      </geometry>
+      <material name="lidar_material">
+        <color rgba="0 0 0 1" />
+      </material>
+    </visual>
+
+    <!-- Collision -->
+    <collision>
+      <origin xyz="0 -0.00011979 0" rpy="3.14159 -0 0" />
+      <geometry>
+        <mesh filename="package://project1_description/urdf/assets_1/lidar.stl" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Joint connecting car to lidar (allows rotation) -->
+  <joint name="lidar_joint" type="revolute">
+    <origin xyz="2.62973 -0.0268655 0.34044" rpy="3.14159 -0 3.14159" />
+    <parent link="car" />
+    <child link="lidar" />
+    <axis xyz="0 0 1" />
+    <!-- Full 360° rotation limit -->
+    <limit effort="10" velocity="10" lower="-3.141592653589793" upper="3.141592653589793" />
+  </joint>
+
+</robot>
