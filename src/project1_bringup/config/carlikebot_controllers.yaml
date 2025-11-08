@@ -1,0 +1,52 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 50 # Hz
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    bicycle_steering_controller:
+      type: bicycle_steering_controller/BicycleSteeringController
+
+bicycle_steering_controller:
+  ros__parameters:
+    wheelbase: 0.50136
+    front_wheel_radius: 0.1015
+    rear_wheel_radius: 0.1015
+
+    # List PRIMARY joints (mimic'd joints will follow automatically)
+    rear_wheels_names: ["wheel_3_rotate"]
+    front_wheels_names: ["wheel_1_turn"]
+
+    front_steering: true
+    reference_timeout: 2.0
+    open_loop: false
+    velocity_rolling_window_size: 10
+
+    base_frame_id: base_footprint
+    odom_frame_id: odom
+    enable_odom_tf: true
+
+    twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.001]
+    pose_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.001]
+
+    position_feedback: true
+    use_stamped_vel: true
+    publish_rate: 50.0
+
+    steering_limit: 0.5
+    max_angular_velocity: 0.5
+
+    linear:
+      x:
+        has_velocity_limits: true
+        max_velocity: 2.0
+        has_acceleration_limits: true
+        max_acceleration: 1.0
+
+    angular:
+      z:
+        has_velocity_limits: true
+        max_velocity: 1.0
+        has_acceleration_limits: true
+        max_acceleration: 0.5
